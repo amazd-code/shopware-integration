@@ -1,0 +1,6 @@
+vendor
+var
+phpstan.neon
+node_modules/
+*.env
+.vscode/*

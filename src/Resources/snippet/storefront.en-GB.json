@@ -1,0 +1,7 @@
+{
+  "amazd-integration": {
+    "cartError": "Your shopping cart could not be saved.",
+    "cartLoaded": "Your shopping cart has been successfully loaded.",
+    "cartNotFound": "This shopping cart no longer exists."
+  }
+}

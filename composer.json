@@ -1,0 +1,31 @@
+{
+    "name": "amazd/shopware-integration",
+    "version": "1.0.0",
+    "type": "shopware-platform-plugin",
+    "description": "Shopware integration with AMAZD platform",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "AMAZD",
+            "homepage": "https://amazd.co"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Amazd\\Integration\\": "src/"
+        }
+    },
+    "extra": {
+        "shopware-plugin-class": "Amazd\\Integration\\AmazdIntegration",
+        "copyright": "AMAZD",
+        "label": {
+            "de-DE": "Shopware integration with AMAZD platform",
+            "en-GB": "Shopware integration with AMAZD platform"
+        }
+    },
+    "require": {
+        "shopware/core": "~6.4.0",
+        "shopware/administration": "~6.4.0",
+        "shopware/storefront": "~6.4.0"
+    }
+}
