@@ -12,7 +12,7 @@ const CONTAINER_ID = process.argv[2];
 // Directory name of plugin inside the container. Depends on installation .zip.
 const pluginDirectory = `ShopwareAmazdIntegration`;
 
-let throttled = {};
+const throttled = {};
 
 fs.watch(
   resolve(__dirname, "../src"),

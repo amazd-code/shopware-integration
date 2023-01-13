@@ -5,6 +5,7 @@ namespace Amazd\Integration\Services;
 use Shopware\Core\Checkout\Cart\SalesChannel\CartService;
 use Shopware\Core\System\SalesChannel\SalesChannelContext;
 use Shopware\Core\Checkout\Cart\LineItemFactoryRegistry;
+use Shopware\Core\Checkout\Cart\LineItem\LineItem;
 use Symfony\Component\HttpFoundation\Request;
 
 class CheckoutService implements CheckoutServiceInterface
@@ -69,8 +70,12 @@ class CheckoutService implements CheckoutServiceInterface
             throw new \Exception("Cart is empty");
         }
 
+        $currentProductIds = $cart->getLineItems()->filterType(LineItem::PRODUCT_LINE_ITEM_TYPE)->getReferenceIds();
+
         foreach ($body->lineItems as $item) {
             try {
+                if (!$item->referencedId || in_array($item->referencedId, $currentProductIds)) continue;
+
                 $lineItem = $this->lineItemFactory->create([
                     'type' => $item->type,
                     'referencedId' => $item->referencedId,

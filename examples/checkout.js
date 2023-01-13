@@ -13,6 +13,7 @@ const SHOP_URL = "http://localhost";
 // https://shopware.stoplight.io/docs/store-api/8e1d78252fa6f-authentication-and-authorisation
 const ACCESS_KEY = "SWSCNEV6QZA2UZRTOFH4MMJJSG";
 
+// Can be taken from admin panel product page URL. http://localhost/admin#/sw/product/detail/c7bca22753c84d08b6178a50052b4146/base -> c7bca22753c84d08b6178a50052b4146
 const PRODUCT_IDS = [
   "c7bca22753c84d08b6178a50052b4146",
   "3ac014f329884b57a2cce5a29f34779c",
@@ -27,7 +28,7 @@ const PRODUCT_IDS = [
 
   // Get context token
   const response = await fetch(`${SHOP_URL}/store-api/context`, {
-    headers: headers,
+    headers,
   }).then((res) => res.json());
 
   const contextToken = response.token;
@@ -49,6 +50,6 @@ const PRODUCT_IDS = [
   });
 
   console.log(
-    `${SHOP_URL}/amazdintegration/checkout/${ACCESS_KEY}/${contextToken}`
+    `${SHOP_URL}/amazd-integration/checkout/${ACCESS_KEY}/${contextToken}`
   );
 })();
