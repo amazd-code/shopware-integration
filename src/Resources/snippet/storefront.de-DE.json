@@ -1,7 +1,6 @@
 {
   "amazd-integration": {
-    "cartError": "Ihr Warenkorb konnte nicht gespeichert werden.",
-    "cartLoaded": "Ihr Warenkorb wurde erfolgreich geladen.",
-    "cartNotFound": "Dieser Warenkorb existiert nicht mehr."
+    "cartLoaded": "Your AMAZD wishbag has been successfully loaded.",
+    "cartNotFound": "There was a problem opening your AMAZD wishbag."
   }
 }
