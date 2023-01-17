@@ -50,6 +50,6 @@ const PRODUCT_IDS = [
   });
 
   console.log(
-    `${SHOP_URL}/amazd-integration/checkout/${ACCESS_KEY}/${contextToken}`
+    `${SHOP_URL}/amazd-integration/checkout/${contextToken}`
   );
 })();

@@ -27,28 +27,10 @@ class CheckoutService implements CheckoutServiceInterface
         $this->lineItemFactory = $lineItemFactory;
     }
 
-    private function object_to_array($obj)
-    {
-        //only process if it's an object or array being passed to the function
-        if (is_object($obj) || is_array($obj)) {
-            $ret = (array) $obj;
-            foreach ($ret as &$item) {
-                //recursively process EACH element regardless of type
-                $item = $this->object_to_array($item);
-            }
-            return $ret;
-        }
-        //otherwise (i.e. for scalar values) return without modification
-        else {
-            return $obj;
-        }
-    }
-
     public function loadCart(Request $request, SalesChannelContext $salesChannelContext)
     {
-
         $contextToken = $request->attributes->get('contextToken');
-        $accessToken = $request->attributes->get('accessToken');
+        $accessToken = $salesChannelContext->getSalesChannel()->getAccessKey();
         $restClient = new \GuzzleHttp\Client();
 
         $cartRequest = new \GuzzleHttp\Psr7\Request(
@@ -61,28 +43,28 @@ class CheckoutService implements CheckoutServiceInterface
             ],
         );
         $cartResponse = $restClient->send($cartRequest);
-        $body = json_decode($cartResponse->getBody()->getContents());
+        $body = json_decode($cartResponse->getBody()->getContents(), true);
 
         $cart = $this->cartService->getCart($salesChannelContext->getToken(), $salesChannelContext);
 
-        if (!$body->lineItems || !count($body->lineItems)) {
+        if (!$body['lineItems'] || !count($body['lineItems'])) {
             throw new \Exception("Cart is empty");
         }
 
         $currentProductIds = $cart->getLineItems()->getReferenceIds();
 
-        foreach ($body->lineItems as $item) {
+        foreach ($body['lineItems'] as $item) {
             try {
-                if (!$item->referencedId || in_array($item->referencedId, $currentProductIds)) continue;
+                if (!$item['referencedId'] || in_array($item['referencedId'], $currentProductIds)) continue;
 
                 $lineItem = $this->lineItemFactory->create([
-                    'type' => $item->type,
-                    'referencedId' => $item->referencedId,
-                    'quantity' => $item->quantity,
+                    'type' => $item['type'],
+                    'referencedId' => $item['referencedId'],
+                    'quantity' => $item['quantity'],
                 ], $salesChannelContext);
 
                 try {
-                    $lineItem->setPayload($this->object_to_array($item->payload));
+                    $lineItem->setPayload($item['payload']);
                 } catch (\Exception $e) {
                 }
 
