@@ -5,6 +5,7 @@ namespace Amazd\Integration\Services;
 use Shopware\Core\Checkout\Cart\SalesChannel\CartService;
 use Shopware\Core\System\SalesChannel\SalesChannelContext;
 use Shopware\Core\Checkout\Cart\LineItemFactoryRegistry;
+use Shopware\Core\Checkout\Cart\LineItem\LineItem;
 use Symfony\Component\HttpFoundation\Request;
 
 class CheckoutService implements CheckoutServiceInterface
@@ -55,7 +56,16 @@ class CheckoutService implements CheckoutServiceInterface
 
         foreach ($body['lineItems'] as $item) {
             try {
-                if (!$item['referencedId'] || in_array($item['referencedId'], $currentProductIds)) continue;
+                if (!$item['referencedId']) continue;
+
+                if (in_array($item['referencedId'], $currentProductIds)) {
+                    $itemId = $cart->getLineItems()->filter(function (LineItem $lineItem) use ($item) {
+                        return $lineItem->getReferencedId() === $item['referencedId'];
+                    })->first()->getId();
+                    
+                    // Remove to let updated item be re-created in the cart
+                    $cart->getLineItems()->remove($itemId);
+                }
 
                 $lineItem = $this->lineItemFactory->create([
                     'type' => $item['type'],
