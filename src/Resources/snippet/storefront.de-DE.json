@@ -1,6 +1,6 @@
 {
   "amazd-integration": {
-    "cartLoaded": "Your AMAZD wishbag has been successfully loaded.",
-    "cartNotFound": "There was a problem opening your AMAZD wishbag."
+    "cartLoaded": "Dein AMAZD Warenkorb wurde erfolgreich geladen.",
+    "cartNotFound": "Es gab ein Problem beim Laden deines AMAZD Warenkorbs."
   }
 }
