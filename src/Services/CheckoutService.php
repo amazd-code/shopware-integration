@@ -34,6 +34,8 @@ class CheckoutService implements CheckoutServiceInterface
         $accessToken = $salesChannelContext->getSalesChannel()->getAccessKey();
         $restClient = new \GuzzleHttp\Client();
 
+        $this->debugInfo($request, 'Sales channel: ' . $salesChannelContext->getSalesChannel()->getName());
+
         $cartRequest = new \GuzzleHttp\Psr7\Request(
             'GET',
             getenv('APP_URL') . '/store-api/checkout/cart',
@@ -45,6 +47,8 @@ class CheckoutService implements CheckoutServiceInterface
         );
         $cartResponse = $restClient->send($cartRequest);
         $body = json_decode($cartResponse->getBody()->getContents(), true);
+
+        $this->debugInfo($request, 'Line items count: ' . ($body['lineItems'] && count($body['lineItems'])));
 
         $cart = $this->cartService->getCart($salesChannelContext->getToken(), $salesChannelContext);
 
@@ -62,7 +66,7 @@ class CheckoutService implements CheckoutServiceInterface
                     $itemId = $cart->getLineItems()->filter(function (LineItem $lineItem) use ($item) {
                         return $lineItem->getReferencedId() === $item['referencedId'];
                     })->first()->getId();
-                    
+
                     // Remove to let updated item be re-created in the cart
                     $cart->getLineItems()->remove($itemId);
                 }
@@ -76,22 +80,44 @@ class CheckoutService implements CheckoutServiceInterface
                 try {
                     $lineItem->setPayload($item['payload']);
                 } catch (\Exception $e) {
+                    $this->debugError($request, $e);
                 }
 
                 $this->cartService->add($cart, $lineItem, $salesChannelContext);
             } catch (\Exception $e) {
+                $this->debugError($request, $e);
             }
         }
 
-        $deleteRequest = new \GuzzleHttp\Psr7\Request(
-            'DELETE',
-            getenv('APP_URL') . '/store-api/checkout/cart',
-            [
-                'Content-Type' => 'application/json',
-                'sw-access-key' =>  $accessToken,
-                'sw-context-token' => $contextToken
-            ],
-        );
-        $restClient->send($deleteRequest);
+        if (!$request->query->has('keepCart')) {
+            $deleteRequest = new \GuzzleHttp\Psr7\Request(
+                'DELETE',
+                getenv('APP_URL') . '/store-api/checkout/cart',
+                [
+                    'Content-Type' => 'application/json',
+                    'sw-access-key' =>  $accessToken,
+                    'sw-context-token' => $contextToken
+                ],
+            );
+            $restClient->send($deleteRequest);
+        }
+    }
+
+    public function debugError(Request $request, $message)
+    {
+        $isDebug = $request->query->has('debug');
+        if (!$isDebug) return;
+
+        $session = $request->getSession();
+        $session->getFlashBag()->add('danger', $message);
+    }
+
+    public function debugInfo(Request $request, $message)
+    {
+        $isDebug = $request->query->has('debug');
+        if (!$isDebug) return;
+
+        $session = $request->getSession();
+        $session->getFlashBag()->add('notice', $message);
     }
 }

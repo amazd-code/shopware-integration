@@ -34,6 +34,7 @@ class AmazdIntegrationController extends StorefrontController
             $this->checkoutService->loadCart($request, $context);
             $this->addFlash('success', $this->trans('amazd-integration.cartLoaded'));
         } catch (\Exception $exception) {
+            $this->checkoutService->debugError($request, $exception);
             $this->addFlash('danger', $this->trans('amazd-integration.cartNotFound'));
         }
 
