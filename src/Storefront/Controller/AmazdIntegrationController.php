@@ -26,7 +26,7 @@ class AmazdIntegrationController extends StorefrontController
     }
 
     /**
-     * @Route("/amazd-integration/checkout/{contextToken}", name="frontend.amazd.integration.checkout", options={"seo"="false"}, methods={"GET"}))
+     * @Route("/amazd-integration/checkout/{accessToken}/{contextToken}", name="frontend.amazd.integration.checkout", options={"seo"="false"}, methods={"GET"}))
      */
     public function checkout(Request $request, SalesChannelContext $context): Response
     {

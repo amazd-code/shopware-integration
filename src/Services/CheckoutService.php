@@ -31,7 +31,7 @@ class CheckoutService implements CheckoutServiceInterface
     public function loadCart(Request $request, SalesChannelContext $salesChannelContext)
     {
         $contextToken = $request->attributes->get('contextToken');
-        $accessToken = $salesChannelContext->getSalesChannel()->getAccessKey();
+        $accessToken = $request->attributes->get('accessToken');
         $restClient = new \GuzzleHttp\Client();
 
         $this->debugInfo($request, 'Sales channel: ' . $salesChannelContext->getSalesChannel()->getName());
@@ -118,6 +118,6 @@ class CheckoutService implements CheckoutServiceInterface
         if (!$isDebug) return;
 
         $session = $request->getSession();
-        $session->getFlashBag()->add('notice', $message);
+        $session->getFlashBag()->add('success', $message);
     }
 }
